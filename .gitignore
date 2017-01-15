@@ -15,7 +15,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -51,14 +50,6 @@ coverage.xml
 
 # Django stuff:
 *.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
 
 # Sphinx documentation
 docs/_build/
@@ -66,24 +57,16 @@ docs/_build/
 # PyBuilder
 target/
 
-# IPython Notebook
+#Ipython Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
+#Crossbar
+.crossbar
+node.pid
+node.key
 
-# celery beat schedule file
-celerybeat-schedule
-
-# dotenv
-.env
-
-# virtualenv
-venv/
-ENV/
-
-# Spyder project settings
-.spyderproject
-
-# Rope project settings
-.ropeproject
+#wampy
+config.yaml
+docs/_*
+key.*
+test-runner-log
