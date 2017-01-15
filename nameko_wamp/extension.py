@@ -4,13 +4,15 @@ from wampy.roles.subscriber import TopicSubscriber
 from nameko.extensions import SharedExtension
 
 
-# look at the QueueConsumer in nameko core
 class WampMessageConsumer(SharedExtension):
-    """ Managed by the Container and responsible for consuming
-    WAMP messages off the server.
+    """ Consumes WAMP messages from a WAMP "Router" Peer.
 
-    ``SharedExtension`` gives us a lookup to the Container that we will
-    be running in.
+    .. note::
+        ``SharedExtension`` gives us a lookup to the Container that we will
+        be running in.
+
+    .. note::
+        Uses ``wampy`` as the WAMP client.
 
     """
     def __init__(
