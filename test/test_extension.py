@@ -5,7 +5,7 @@ from wampy.peers.clients import Client
 
 from nameko.testing.utils import assert_stops_raising
 
-from nameko_wamp.constants import WAMP_URI_CONFIG_KEY 
+from nameko_wamp.constants import WAMP_CONFIG_KEY 
 from nameko_wamp.entrypoint import consume
 
 

@@ -5,7 +5,7 @@ from wampy.roles.subscriber import TopicSubscriber
 
 from nameko.extensions import ProviderCollector, SharedExtension
 
-from nameko_wamp.constants import WAMP_URI_CONFIG_KEY 
+from nameko_wamp.constants import WAMP_CONFIG_KEY 
 
 logger = logging.getLogger(__name__)
 
