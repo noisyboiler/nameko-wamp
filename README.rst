@@ -9,4 +9,4 @@ Run Tests
 ::
 
 	$ pip install --editable .[dev]
-	$ py.test ./test
+	$ py.test ./test -vs

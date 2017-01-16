@@ -42,7 +42,6 @@ def test_service(container_factory, router):
 
     # wait a couple of seconds for the subscription to take place...
     # how better to handle this?
-
     eventlet.sleep(2)
 
     with Client() as wamp_client:
