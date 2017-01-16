@@ -1,3 +1,0 @@
-crossbar==0.15.0
-wampy==0.7.0
-pytest
