@@ -27,7 +27,7 @@ def wamp_client(router):
 
 def test_service(container_factory, router):
     container = container_factory(WampService, config={
-        WAMP_URI_CONFIG_KEY: {
+        WAMP_CONFIG_KEY: {
             'realm': DEFAULT_REALM,
             'topic': "foobar",
             'host': DEFAULT_HOST,

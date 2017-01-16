@@ -28,10 +28,10 @@ class WampTopicExtension(SharedExtension, ProviderCollector):
         self._gt = None
 
     def setup(self):
-        self.realm = self.container.config[WAMP_URI_CONFIG_KEY]['realm']
-        self.topic = self.container.config[WAMP_URI_CONFIG_KEY]['topic']
-        self.wamp_host = self.container.config[WAMP_URI_CONFIG_KEY]['host']
-        self.wamp_port = self.container.config[WAMP_URI_CONFIG_KEY]['port']
+        self.realm = self.container.config[WAMP_CONFIG_KEY]['realm']
+        self.topic = self.container.config[WAMP_CONFIG_KEY]['topic']
+        self.wamp_host = self.container.config[WAMP_CONFIG_KEY]['host']
+        self.wamp_port = self.container.config[WAMP_CONFIG_KEY]['port']
         self.transport = "websocket"
         self.router = Router(host=self.wamp_host, port=self.wamp_port)
         self.consumer = TopicSubscriber(
