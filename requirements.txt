@@ -1,2 +1,4 @@
 nameko
-wampy==0.7.2
+-e git+https://github.com/noisyboiler/wampy.git@0.7.3#egg=wampy-0.7.3
+# could be a problem - nameko uses a more recent version
+eventlet==0.18.4
