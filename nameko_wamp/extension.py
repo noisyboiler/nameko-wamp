@@ -11,16 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class WampTopicConsumer(SharedExtension, ProviderCollector):
-    """ Consumes WAMP messages from a WAMP "Router" Peer.
 
-    .. note::
-        ``SharedExtension`` gives us a lookup to the Container that we will
-        be running in.
-
-    .. note::
-        Uses ``wampy`` as the WAMP client.
-
-    """
     def __init__(self, topic):
         super(WampTopicConsumer, self).__init__()
         self.topic = topic
