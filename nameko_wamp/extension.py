@@ -5,12 +5,12 @@ from wampy.roles.subscriber import TopicSubscriber
 
 from nameko.extensions import ProviderCollector, SharedExtension
 
-from nameko_wamp.constants import WAMP_CONFIG_KEY 
+from nameko_wamp.constants import WAMP_CONFIG_KEY
 
 logger = logging.getLogger(__name__)
 
 
-class WampTopicExtension(SharedExtension, ProviderCollector):
+class WampTopicConsumer(SharedExtension, ProviderCollector):
     """ Consumes WAMP messages from a WAMP "Router" Peer.
 
     .. note::
@@ -21,22 +21,21 @@ class WampTopicExtension(SharedExtension, ProviderCollector):
         Uses ``wampy`` as the WAMP client.
 
     """
-    def __init__(self):
-        super(WampTopicExtension, self).__init__()
+    def __init__(self, topic):
+        super(WampTopicConsumer, self).__init__()
+        self.topic = topic
 
-        self.messages = []
         self._gt = None
 
     def setup(self):
         self.realm = self.container.config[WAMP_CONFIG_KEY]['realm']
-        self.topic = self.container.config[WAMP_CONFIG_KEY]['topic']
         self.wamp_host = self.container.config[WAMP_CONFIG_KEY]['host']
         self.wamp_port = self.container.config[WAMP_CONFIG_KEY]['port']
         self.transport = "websocket"
         self.router = Router(host=self.wamp_host, port=self.wamp_port)
         self.consumer = TopicSubscriber(
             router=self.router, realm=self.realm, topic=self.topic,
-            transport=self.transport, message_queue=self.messages,
+            transport=self.transport, message_handler=self.message_handler,
         )
 
     def start(self):
@@ -44,6 +43,10 @@ class WampTopicExtension(SharedExtension, ProviderCollector):
 
     def stop(self):
         self.consumer.stop()
+
+    def message_handler(self, *args, **kwargs):
+        for provider in self._providers:
+            provider.handle_message(*args, **kwargs)
 
     def _consume(self):
         logger.info(

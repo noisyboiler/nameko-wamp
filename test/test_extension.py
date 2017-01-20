@@ -5,7 +5,7 @@ from wampy.peers.clients import Client
 
 from nameko.testing.utils import assert_stops_raising
 
-from nameko_wamp.constants import WAMP_CONFIG_KEY 
+from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.entrypoint import consume
 
 
@@ -15,8 +15,8 @@ class WampService(object):
     messages = []
 
     @consume(topic="foobar")
-    def message_handler(self):
-        pass
+    def message_handler(self, *args, **kwargs):
+        self.messages.append((args, kwargs))
 
 
 @pytest.yield_fixture

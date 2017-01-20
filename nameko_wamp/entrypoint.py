@@ -1,21 +1,12 @@
 from nameko.extensions import Entrypoint
 
-from nameko_wamp.extension import WampTopicExtension
+from nameko_wamp.extension import WampTopicConsumer
 
 
-class WampTopicConsumer(Entrypoint):
-
-    topic_consumer = WampTopicExtension()
+class WampTopicHandler(Entrypoint):
 
     def __init__(self, topic):
-        """ Decorates a method as a WAMP topic consumer.
-
-        :Parameters:
-            topic: string
-                The topic to consume from.
-
-        """
-        self.topic = topic
+        self.topic_consumer = WampTopicConsumer(topic=topic)
 
     def setup(self):
         self.topic_consumer.register_provider(self)
@@ -23,9 +14,10 @@ class WampTopicConsumer(Entrypoint):
     def stop(self):
         self.topic_consumer.unregister_provider(self)
 
-    def handle_message(self, body, message):
-        # how to get here??
-        pass
+    def handle_message(self, *args, **kwargs):
+        instance = self.container.service_cls()
+        method = getattr(instance, self.method_name)
+        method(*args, **kwargs)
 
 
-consume = WampTopicConsumer.decorator
+consume = WampTopicHandler.decorator
