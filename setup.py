@@ -29,7 +29,8 @@ setup(
     keywords='WAMP RPC',
     packages=find_packages(),
     install_requires=[
-        "wampy==0.7.2",
+        "nameko==2.5.1",
+        "wampy==0.7.3",
     ],
     extras_require={
         'dev': [
