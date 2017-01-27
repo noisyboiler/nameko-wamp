@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 class WampTopicConsumer(SharedExtension, ProviderCollector):
 
+    # the only transport supported by Wampy
+    transport = "websocket"
+
     def __init__(self):
         super(WampTopicConsumer, self).__init__()
 
@@ -22,11 +25,10 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
         self.realm = self.container.config[WAMP_CONFIG_KEY]['realm']
         self.wamp_host = self.container.config[WAMP_CONFIG_KEY]['host']
         self.wamp_port = self.container.config[WAMP_CONFIG_KEY]['port']
-        self.transport = "websocket"
         self.router = Router(host=self.wamp_host, port=self.wamp_port)
 
     def start(self):
-        self._register_handlers()
+        self._register_topics()
         self.consumer = TopicSubscriber(
             router=self.router, realm=self.realm, topics=self._topics,
             transport=self.transport, message_handler=self.message_handler,
@@ -45,7 +47,7 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
             if provider.topic == topic:
                 provider.handle_message(message)
 
-    def _register_handlers(self):
+    def _register_topics(self):
         for provider in self._providers:
             self._topics.append(provider.topic)
 

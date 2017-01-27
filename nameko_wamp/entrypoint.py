@@ -3,7 +3,7 @@ from nameko.extensions import Entrypoint
 from nameko_wamp.extension import WampTopicConsumer
 
 
-class WampTopicHandler(Entrypoint):
+class WampTopicEntrypoint(Entrypoint):
     topic_consumer = WampTopicConsumer()
 
     def __init__(self, topic):
@@ -19,4 +19,4 @@ class WampTopicHandler(Entrypoint):
         self.container.spawn_worker(self, args, kwargs)
 
 
-consume = WampTopicHandler.decorator
+consume = WampTopicEntrypoint.decorator
