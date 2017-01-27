@@ -16,9 +16,7 @@ class WampTopicHandler(Entrypoint):
         self.topic_consumer.unregister_provider(self)
 
     def handle_message(self, *args, **kwargs):
-        instance = self.container.service_cls()
-        method = getattr(instance, self.method_name)
-        method(*args, **kwargs)
+        self.container.spawn_worker(self, args, kwargs)
 
 
 consume = WampTopicHandler.decorator
