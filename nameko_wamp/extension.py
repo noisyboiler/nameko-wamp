@@ -38,19 +38,12 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
         self.consumer.stop()
 
     def message_handler(self, *args, **kwargs):
+        message = kwargs['message']
         topic = kwargs['_meta']['topic']
 
         for provider in self._providers:
             if provider.topic == topic:
-                logger.info(
-                    "nameko extension handling message for %s: %s",
-                    provider, (args, kwargs)
-                )
-                provider.handle_message(kwargs['message'])
-            else:
-                logger.info(
-                    "%s ignoring message from topic %s", provider, topic
-                )
+                provider.handle_message(message)
 
     def _register_handlers(self):
         for provider in self._providers:
