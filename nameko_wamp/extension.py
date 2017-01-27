@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 class WampTopicConsumer(SharedExtension, ProviderCollector):
 
-    def __init__(self, topic):
+    def __init__(self):
         super(WampTopicConsumer, self).__init__()
-        self.topic = topic
 
         self._gt = None
+        self._topics = []
 
     def setup(self):
         self.realm = self.container.config[WAMP_CONFIG_KEY]['realm']
@@ -24,12 +24,15 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
         self.wamp_port = self.container.config[WAMP_CONFIG_KEY]['port']
         self.transport = "websocket"
         self.router = Router(host=self.wamp_host, port=self.wamp_port)
+
+
+    def start(self):
+        self._register_handlers()
         self.consumer = TopicSubscriber(
-            router=self.router, realm=self.realm, topic=self.topic,
+            router=self.router, realm=self.realm, topics=self._topics,
             transport=self.transport, message_handler=self.message_handler,
         )
 
-    def start(self):
         self._gt = self.container.spawn_managed_thread(self._consume)
 
     def stop(self):
@@ -37,9 +40,16 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
 
     def message_handler(self, *args, **kwargs):
         for provider in self._providers:
-            provider.handle_message(*args, **kwargs)
+            if provider.topic == args[0]:
+                logger.info(
+                    "nameko extension handling message for %s: %s", provider, (args, kwargs))
+                provider.handle_message(*args, **kwargs)
+
+    def _register_handlers(self):
+        for provider in self._providers:
+            self._topics.append(provider.topic)
 
     def _consume(self):
         logger.info(
-            'TopicSubscriber starting to consume: "%s"', self.topic)
+            'TopicSubscriber starting to consume: "%s"', self._topics)
         self.consumer.start()

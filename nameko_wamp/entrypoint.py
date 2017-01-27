@@ -4,9 +4,10 @@ from nameko_wamp.extension import WampTopicConsumer
 
 
 class WampTopicHandler(Entrypoint):
+    topic_consumer = WampTopicConsumer()
 
     def __init__(self, topic):
-        self.topic_consumer = WampTopicConsumer(topic=topic)
+        self.topic = topic
 
     def setup(self):
         self.topic_consumer.register_provider(self)
