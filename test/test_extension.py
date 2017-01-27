@@ -1,9 +1,8 @@
 import eventlet
 import pytest
+from nameko.testing.utils import assert_stops_raising
 from wampy.constants import DEFAULT_REALM, DEFAULT_HOST, DEFAULT_PORT
 from wampy.peers.clients import Client
-
-from nameko.testing.utils import assert_stops_raising
 
 from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.entrypoint import consume
@@ -33,7 +32,6 @@ def test_service(container_factory, router):
     container = container_factory(WampService, config={
         WAMP_CONFIG_KEY: {
             'realm': DEFAULT_REALM,
-            'topic': "foobar",
             'host': DEFAULT_HOST,
             'port': DEFAULT_PORT,
             }
