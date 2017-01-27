@@ -14,11 +14,11 @@ class WampService(object):
 
     messages = []
 
-    @consume(topic="foobar")
+    @consume(topic="foo")
     def foobar_handler(self, *args, **kwargs):
         self.messages.append((args, kwargs))
 
-    @consume(topic="spam")
+    @consume(topic="bar")
     def spam_handler(self, *args, **kwargs):
         self.messages.append((args, kwargs))
 
@@ -49,10 +49,13 @@ def test_service(container_factory, router):
     eventlet.sleep(2)
 
     with Client() as wamp_client:
-        wamp_client.publish(topic="foobar", message="spam")
-        wamp_client.publish(topic="spam", message="cheese")
+        wamp_client.publish(topic="foo", message="cheese")
+        wamp_client.publish(topic="bar", message="eggs")
 
     def waiting_for_the_message():
         assert len(WampService.messages) == 2
+        assert WampService.messages == [
+            ((u'cheese',), {}), ((u'eggs',), {})
+        ]
 
     assert_stops_raising(waiting_for_the_message)

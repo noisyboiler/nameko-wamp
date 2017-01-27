@@ -25,7 +25,6 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
         self.transport = "websocket"
         self.router = Router(host=self.wamp_host, port=self.wamp_port)
 
-
     def start(self):
         self._register_handlers()
         self.consumer = TopicSubscriber(
@@ -39,11 +38,19 @@ class WampTopicConsumer(SharedExtension, ProviderCollector):
         self.consumer.stop()
 
     def message_handler(self, *args, **kwargs):
+        topic = kwargs['_meta']['topic']
+
         for provider in self._providers:
-            if provider.topic == args[0]:
+            if provider.topic == topic:
                 logger.info(
-                    "nameko extension handling message for %s: %s", provider, (args, kwargs))
-                provider.handle_message(*args, **kwargs)
+                    "nameko extension handling message for %s: %s",
+                    provider, (args, kwargs)
+                )
+                provider.handle_message(kwargs['message'])
+            else:
+                logger.info(
+                    "%s ignoring message from topic %s", provider, topic
+                )
 
     def _register_handlers(self):
         for provider in self._providers:
