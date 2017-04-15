@@ -1,5 +1,3 @@
-import logging
-
 from nameko.extensions import ProviderCollector, SharedExtension, Extension
 from wampy.errors import WampyError
 from wampy.peers.clients import Client
@@ -9,8 +7,6 @@ from wampy.roles.subscriber import TopicSubscriber
 
 from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.messages import NamekoMessageHandler
-
-logger = logging.getLogger(__name__)
 
 
 class WampClientProxy(Extension):
@@ -29,9 +25,6 @@ class WampClientProxy(Extension):
 
 
 class WampTopicProxy(SharedExtension, ProviderCollector):
-
-    # the only transport supported by Wampy
-    transport = "websocket"
 
     def __init__(self):
         super(WampTopicProxy, self).__init__()
@@ -71,8 +64,6 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
             self._topics.append(provider.topic)
 
     def _consume(self):
-        logger.info(
-            'WampTopicProxy starting to consume: "%s"', self._topics)
         self.consumer.start()
 
 
@@ -90,12 +81,9 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
 
     def setup(self):
         self._register_procedures()
-
         self.config_path = self.container.config[
             WAMP_CONFIG_KEY]['config_path']
         self.router = Router(config_path=self.config_path)
-        # remember that the CalleeProxy is the WAMP client, not the
-        # nameko Extension
         self.client = CalleeProxy(
             router=self.router,
             procedure_names=self.procedure_names,
@@ -116,8 +104,6 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
 
         for provider in self._providers:
             if provider.method_name == procedure_name:
-                # this is an async operation and only "promises" to return
-                # something
                 provider.handle_message(message, request_id=request_id)
                 break
         else:

@@ -1,8 +1,7 @@
 from functools import partial
 
-from wampy.messages import Yield
-
 from nameko.extensions import Entrypoint
+from wampy.messages import Yield
 
 from . import WampTopicProxy, WampCalleeProxy
 
@@ -21,9 +20,6 @@ class WampTopicEntrypoint(Entrypoint):
 
     def handle_message(self, *args, **kwargs):
         self.container.spawn_worker(self, args, kwargs)
-
-
-consume = WampTopicEntrypoint.decorator
 
 
 class WampCalleeEntrypoint(Entrypoint):
@@ -66,4 +62,5 @@ class WampCalleeEntrypoint(Entrypoint):
         return result, exc_info
 
 
+consume = WampTopicEntrypoint.decorator
 callee = WampCalleeEntrypoint.decorator
