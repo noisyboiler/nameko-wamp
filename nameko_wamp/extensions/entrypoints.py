@@ -4,7 +4,7 @@ from wampy.messages import Yield
 
 from nameko.extensions import Entrypoint
 
-from nameko_wamp.extensions import WampTopicProxy, WampCalleeProxy
+from . import WampTopicProxy, WampCalleeProxy
 
 
 class WampTopicEntrypoint(Entrypoint):

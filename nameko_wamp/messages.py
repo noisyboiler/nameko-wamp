@@ -6,6 +6,7 @@ from wampy.messages import Error, Goodbye, Registered, Welcome
 class NamekoInvocation(InvocationWithMeta):
 
     def handle_result(self, result, error=None):
+        # overridden so that a nameko worker thread can handle the result
         pass
 
 

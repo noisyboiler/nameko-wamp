@@ -1,7 +1,8 @@
 import logging
 
-from nameko.extensions import ProviderCollector, SharedExtension
+from nameko.extensions import ProviderCollector, SharedExtension, Extension
 from wampy.errors import WampyError
+from wampy.peers.clients import Client
 from wampy.peers.routers import Crossbar as Router
 from wampy.roles.callee import CalleeProxy
 from wampy.roles.subscriber import TopicSubscriber
@@ -10,6 +11,21 @@ from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.messages import NamekoMessageHandler
 
 logger = logging.getLogger(__name__)
+
+
+class WampClientProxy(Extension):
+
+    def setup(self):
+        self.config_path = self.container.config[
+            WAMP_CONFIG_KEY]['config_path']
+        self.router = Router(config_path=self.config_path)
+
+    def start(self):
+        self.client = Client(router=self.router)
+        self.client.start()
+
+    def stop(self):
+        self.client.stop()
 
 
 class WampTopicProxy(SharedExtension, ProviderCollector):

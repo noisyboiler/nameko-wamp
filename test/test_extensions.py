@@ -1,14 +1,16 @@
 import pytest
-from nameko.testing.utils import assert_stops_raising
+from nameko.testing.utils import assert_stops_raising, get_container
+from nameko.testing.services import entrypoint_hook
 from wampy.peers.clients import Client
 
+from nameko_wamp.extensions.dependencies import Caller
+from nameko_wamp.extensions.entrypoints import consume, callee
 from nameko_wamp.constants import WAMP_CONFIG_KEY
-from nameko_wamp.entrypoints import consume, callee
 from nameko_wamp.testing import wait_for_registrations
 
 
-class WampService(object):
-    name = "wamp service"
+class WampServiceA(object):
+    name = "wamp service A"
 
     messages = []
 
@@ -26,6 +28,17 @@ class WampService(object):
         return "spam"
 
 
+class WampServiceB(object):
+    name = "wamp service B"
+
+    # note that we don't care about a particular service here
+    wamp_caller = Caller()
+
+    @callee
+    def service_a_caller(self, *args, **kwargs):
+        return self.wamp_caller.spam_call()
+
+
 @pytest.yield_fixture
 def wamp_client(router):
     with Client(router=router) as client:
@@ -33,14 +46,14 @@ def wamp_client(router):
 
 
 def test_service_consumes_topics(container_factory, config_path, router):
-    container = container_factory(WampService, config={
+    container = container_factory(WampServiceA, config={
         WAMP_CONFIG_KEY: {
             'config_path': config_path,
             }
         }
     )
 
-    assert WampService.messages == []
+    assert WampServiceA.messages == []
 
     container.start()
 
@@ -49,26 +62,26 @@ def test_service_consumes_topics(container_factory, config_path, router):
         wamp_client.publish(topic="bar", message="eggs")
 
     def waiting_for_the_message():
-        assert len(WampService.messages) == 2
-        assert WampService.messages == [
+        assert len(WampServiceA.messages) == 2
+        assert WampServiceA.messages == [
             ((u'cheese',), {}), ((u'eggs',), {})
         ]
 
     assert_stops_raising(waiting_for_the_message)
-    WampService.messages = []
+    WampServiceA.messages = []
 
 
 def test_service_rpc_methods_are_called_from_wamp_client(
         container_factory, config_path, router
 ):
-    container = container_factory(WampService, config={
+    container = container_factory(WampServiceA, config={
         WAMP_CONFIG_KEY: {
             'config_path': config_path,
             }
         }
     )
 
-    assert WampService.messages == []
+    assert WampServiceA.messages == []
 
     container.start()
     wait_for_registrations(container, number_of_registrations=1)
@@ -78,10 +91,25 @@ def test_service_rpc_methods_are_called_from_wamp_client(
         assert result == "spam"
 
     def waiting_for_the_message():
-        assert len(WampService.messages) == 1
-        assert WampService.messages == [
+        assert len(WampServiceA.messages) == 1
+        assert WampServiceA.messages == [
             (({u'cheese': u'cheddar', u'eggs': u'ducks'},), {})
         ]
 
     assert_stops_raising(waiting_for_the_message)
-    WampService.messages = []
+    WampServiceA.messages = []
+
+
+def test_rpc_service_integration(runner_factory, config_path, router):
+    config = {
+        WAMP_CONFIG_KEY: {
+            'config_path': config_path,
+        }
+    }
+
+    runner = runner_factory(config, WampServiceA, WampServiceB)
+    runner.start()
+
+    container = get_container(runner, WampServiceB)
+    with entrypoint_hook(container, "service_a_caller") as entrypoint:
+        assert entrypoint("value") == "spam"
