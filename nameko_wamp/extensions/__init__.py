@@ -70,9 +70,6 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
         return self._procedure_callback_map.keys()
 
     def setup(self):
-        import pdb
-        pdb.set_trace()
-
         self._gt = None
         self._procedure_callback_map = {}
 
