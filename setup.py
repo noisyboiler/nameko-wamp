@@ -31,6 +31,7 @@ setup(
     install_requires=[
         "nameko==2.5.1",
         "wampy==0.9.2",
+        "eventlet==0.21.0",
     ],
     extras_require={
         'dev': [
