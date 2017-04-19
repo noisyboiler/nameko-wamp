@@ -4,6 +4,7 @@
 .. _Travis: https://travis-ci.org/noisyboiler/nameko-wamp
 
 .. |Python27| image:: https://img.shields.io/badge/python-2.7-blue.svg
+.. _Python27: https://pypi.python.org/pypi/nameko-wamp/
 
 nameko wamp
 ===========
