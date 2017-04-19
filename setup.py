@@ -20,7 +20,7 @@ setup(
     author_email='noisyboiler@googlemail.com',
     license='GNU GPLv3',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "nameko==2.5.1",
-        "wampy==0.8.4",
+        "wampy==0.9.2",
     ],
     extras_require={
         'dev': [
