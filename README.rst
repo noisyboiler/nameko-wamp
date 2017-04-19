@@ -29,9 +29,9 @@ Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) exam
             pass
 
 
-One method is marked as a "callee", which is a WAMP Role, and another is marked as a WAMP "caller" Role. The former is callable over RPC and is (almost) exactly the same as the nameko ```rpc``` Extension. The latter consumes from a WAMP Topic and appears exactly the same as the nameko ```event_handler``` Extension.
+One method is marked as a "callee", which is a WAMP Role, and another is marked as a WAMP "caller" Role. The former is callable over RPC and is (almost) exactly the same as the nameko ``rpc`` Extension. The latter consumes from a WAMP Topic and appears exactly the same as the nameko ``event_handler`` Extension.
 
-There is also the dependency injection ```caller```. Yet another WAMP Role, this allows outgoing RPC calls from your service to other nameko services. Finally the WAMP Role ```publisher``` dependency which allows a service API to publish messages to WAMP Topics.
+There is also the dependency injection ``caller``. Yet another WAMP Role, this allows outgoing RPC calls from your service to other nameko services. Finally the WAMP Role ``publisher`` dependency which allows a service API to publish messages to WAMP Topics.
 
 Wampy
 ~~~~~
