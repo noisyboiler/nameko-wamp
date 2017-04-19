@@ -3,6 +3,54 @@ nameko wamp
 
 WAMP extension for the nameko microservices framework
 
+Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints ::
+
+::
+
+	from nameko_wamp.extensions.dependencies import Caller
+	from nameko_wamp.extensions.entrypoints import consume, callee
+
+
+	class WeatherService:
+
+		name = "weather_service"
+
+		caller = Caller()
+
+		@callee
+		def get_weather(self):
+			# the weather is always sunny here!
+			return "sunny"
+
+		@consume
+		def weather_updates(self, event_data):
+			# and do something with the new weather data here
+			pass
+
+
+One method is marked as a "callee", which is a WAMP Role, and another is marked as a WAMP "caller" Role. The former is callable over RPC and is (almost) exactly the same as the nameko ```rpc``` Extension. The latter consumes from a WAMP Topic and appears exactly the same as the nameko ```event_handler``` Extension.
+
+There is also the dependency injection "caller". Yet another WAMP Role, this allows outgoing RPC calls from your service to other nameko services.
+
+Wampy
+~~~~~
+
+Under the hood nameko wamp uses wampy as the Client Peer - and the Router Peer when running tests. The Router is Crossbar.io.
+
+You can use a stand-alone wampy Client to interact with your nameko services too. See the wampy project for more details, but the standard pattern is:
+
+::
+
+	    with Client(router=router) as client:
+        	result = client.rpc.get_weather()
+        	assert result == "sunny"
+
+
+Note that when I call a remote procedure there is no reference to the service that provides it - and this is different to core nameko where a service name must be provided. This simpler behaviour is explained by the Router Peer which maintains all the registrations and subscriptions on behalf of WAMP clients implementing these Roles.
+
+
+
+
 Run Tests
 ---------
 
