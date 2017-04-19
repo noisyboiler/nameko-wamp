@@ -26,6 +26,8 @@ class WampCalleeEntrypoint(Entrypoint):
     callee_proxy = WampCalleeProxy()
 
     def setup(self):
+        import pdb
+        pdb.set_trace()
         self.callee_proxy.register_provider(self)
 
     def stop(self):

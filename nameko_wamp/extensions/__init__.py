@@ -26,13 +26,9 @@ class WampClientProxy(Extension):
 
 class WampTopicProxy(SharedExtension, ProviderCollector):
 
-    def __init__(self):
-        super(WampTopicProxy, self).__init__()
-
+    def setup(self):
         self._gt = None
         self._topics = []
-
-    def setup(self):
         self.config_path = self.container.config[
             WAMP_CONFIG_KEY]['config_path']
         self.router = Router(config_path=self.config_path)
@@ -69,17 +65,17 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
 
 class WampCalleeProxy(SharedExtension, ProviderCollector):
 
-    def __init__(self):
-        super(WampCalleeProxy, self).__init__()
-
-        self._gt = None
-        self._procedure_callback_map = {}
-
     @property
     def procedure_names(self):
         return self._procedure_callback_map.keys()
 
     def setup(self):
+        import pdb
+        pdb.set_trace()
+
+        self._gt = None
+        self._procedure_callback_map = {}
+
         self._register_procedures()
         self.config_path = self.container.config[
             WAMP_CONFIG_KEY]['config_path']
