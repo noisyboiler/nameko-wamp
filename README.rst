@@ -1,7 +1,7 @@
 nameko wamp
 ===========
 
-WAMP extension for the nameko microservices framework
+Web Application Messaging Protocol (WAMP) for the nameko microservices framework
 
 Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints.
 
@@ -24,7 +24,7 @@ Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) exam
             return "sunny"
 
         @consume
-        def weather_updates(self, event_data):
+        def weather_updates(self, topic_data):
             # and do something with the new weather data here
             pass
 
