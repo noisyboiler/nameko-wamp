@@ -7,26 +7,26 @@ Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) exam
 
 ::
 
-	from nameko_wamp.extensions.dependencies import Caller, Publisher
-	from nameko_wamp.extensions.entrypoints import consume, callee
+    from nameko_wamp.extensions.dependencies import Caller, Publisher
+    from nameko_wamp.extensions.entrypoints import consume, callee
 
 
-	class WeatherService:
+    class WeatherService:
 
-		name = "weather_service"
+        name = "weather_service"
 
-		caller = Caller()
-		publihser = Publisher()
+        caller = Caller()
+        publihser = Publisher()
 
-		@callee
-		def get_weather(self):
-			# the weather is always sunny here!
-			return "sunny"
+        @callee
+        def get_weather(self):
+            # the weather is always sunny here!
+            return "sunny"
 
-		@consume
-		def weather_updates(self, event_data):
-			# and do something with the new weather data here
-			pass
+        @consume
+        def weather_updates(self, event_data):
+            # and do something with the new weather data here
+            pass
 
 
 One method is marked as a "callee", which is a WAMP Role, and another is marked as a WAMP "caller" Role. The former is callable over RPC and is (almost) exactly the same as the nameko ```rpc``` Extension. The latter consumes from a WAMP Topic and appears exactly the same as the nameko ```event_handler``` Extension.
@@ -42,12 +42,12 @@ You can use a stand-alone wampy Client to interact with your nameko services too
 
 ::
 
-	    with Client(router=router) as client:
-        	result = client.rpc.get_weather()
-        	assert result == "sunny"
+    with Client(router=router) as client:
+        result = client.rpc.get_weather()
+        assert result == "sunny"
 
-        	# and publish to a Topic
-        	client.publish(topic="foobar", message={...})
+        # and publish to a Topic
+        client.publish(topic="foobar", message={...})
 
 Note that when I call a remote procedure there is no reference to the service that provides it - and this is different to core nameko where a service name must be provided. This simpler behaviour is explained by the Router Peer which maintains all the registrations and subscriptions on behalf of WAMP clients implementing these Roles.
 
@@ -57,5 +57,5 @@ Run Tests
 
 ::
 
-	$ pip install --editable .[dev]
-	$ py.test ./test -vs
+    $ pip install --editable .[dev]
+    $ py.test ./test -vs
