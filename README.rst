@@ -1,3 +1,10 @@
+|Travis|_ |Python27|_ 
+
+.. |Travis| image:: https://travis-ci.org/noisyboiler/nameko-wamp.svg?branch=master
+.. _Travis: https://travis-ci.org/noisyboiler/nameko-wamp
+
+.. |Python27| image:: https://img.shields.io/badge/python-2.7-blue.svg
+
 nameko wamp
 ===========
 
