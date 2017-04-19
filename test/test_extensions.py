@@ -3,7 +3,7 @@ from nameko.testing.utils import assert_stops_raising, get_container
 from nameko.testing.services import entrypoint_hook
 from wampy.peers.clients import Client
 
-from nameko_wamp.extensions.dependencies import Caller
+from nameko_wamp.extensions.dependencies import Caller, Pubisher
 from nameko_wamp.extensions.entrypoints import consume, callee
 from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.testing import wait_for_registrations
@@ -37,6 +37,16 @@ class WampServiceB(object):
     @callee
     def service_a_caller(self, *args, **kwargs):
         return self.wamp_caller.spam_call()
+
+
+class WampServiceC(object):
+    name = "wamp service C"
+
+    publisher = Pubisher()
+
+    @callee
+    def publish_foo(self):
+        self.publisher(topic="foo", message="much ado about foo")
 
 
 @pytest.yield_fixture
@@ -113,3 +123,34 @@ def test_rpc_service_integration(runner_factory, config_path, router):
     container = get_container(runner, WampServiceB)
     with entrypoint_hook(container, "service_a_caller") as entrypoint:
         assert entrypoint("value") == "spam"
+
+    WampServiceA.messages = []
+
+
+def test_publish_service_integration(runner_factory, config_path, router):
+    config = {
+        WAMP_CONFIG_KEY: {
+            'config_path': config_path,
+        }
+    }
+
+    runner = runner_factory(config, WampServiceA, WampServiceC)
+    runner.start()
+
+    container = get_container(runner, WampServiceA)
+    wait_for_registrations(container, number_of_registrations=1)
+
+    assert WampServiceA.messages == []
+
+    container = get_container(runner, WampServiceC)
+    with entrypoint_hook(container, "publish_foo") as entrypoint:
+        entrypoint()
+
+    def waiting_for_the_message():
+        assert len(WampServiceA.messages) == 1
+        assert WampServiceA.messages == [
+            ((u'much ado about foo',), {})
+        ]
+
+    assert_stops_raising(waiting_for_the_message)
+    WampServiceA.messages = []
