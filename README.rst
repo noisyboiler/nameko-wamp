@@ -59,3 +59,7 @@ Run Tests
 
     $ pip install --editable .[dev]
     $ py.test ./test -vs
+
+
+.. _wampy: https://github.com/noisyboiler/wampy
+.. _nameko: https://github.com/nameko/nameko
