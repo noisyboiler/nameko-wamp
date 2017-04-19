@@ -3,7 +3,7 @@ nameko wamp
 
 WAMP extension for the nameko microservices framework
 
-Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints ::
+Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints.
 
 ::
 
