@@ -4,7 +4,7 @@ sudo: false
 
 # https://github.com/travis-ci/travis-ci/issues/3968
 install:
-  - pip install -U pip wheel
+  - pip install -U pip
 
 python:
   - "2.7"
