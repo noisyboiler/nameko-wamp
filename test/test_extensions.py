@@ -6,7 +6,8 @@ from wampy.peers.clients import Client
 from nameko_wamp.extensions.dependencies import Caller, Pubisher
 from nameko_wamp.extensions.entrypoints import consume, callee
 from nameko_wamp.constants import WAMP_CONFIG_KEY
-from nameko_wamp.testing import wait_for_registrations
+from nameko_wamp.testing import (
+    wait_for_registrations, wait_for_subscriptions)
 
 
 class WampServiceA(object):
@@ -66,6 +67,8 @@ def test_service_consumes_topics(container_factory, config_path, router):
     assert WampServiceA.messages == []
 
     container.start()
+    wait_for_registrations(container, number_of_registrations=1)
+    wait_for_subscriptions(container, number_of_subscriptions=2)
 
     with Client(router=router) as wamp_client:
         wamp_client.publish(topic="foo", message="cheese")
@@ -95,6 +98,7 @@ def test_service_rpc_methods_are_called_from_wamp_client(
 
     container.start()
     wait_for_registrations(container, number_of_registrations=1)
+    wait_for_subscriptions(container, number_of_subscriptions=2)
 
     with Client(router=router) as wamp_client:
         result = wamp_client.rpc.spam_call(cheese="cheddar", eggs="ducks")
@@ -120,7 +124,13 @@ def test_rpc_service_integration(runner_factory, config_path, router):
     runner = runner_factory(config, WampServiceA, WampServiceB)
     runner.start()
 
+    container = get_container(runner, WampServiceA)
+    wait_for_registrations(container, number_of_registrations=1)
+    wait_for_subscriptions(container, number_of_subscriptions=2)
+
     container = get_container(runner, WampServiceB)
+    wait_for_registrations(container, number_of_registrations=1)
+
     with entrypoint_hook(container, "service_a_caller") as entrypoint:
         assert entrypoint("value") == "spam"
 
@@ -139,6 +149,7 @@ def test_publish_service_integration(runner_factory, config_path, router):
 
     container = get_container(runner, WampServiceA)
     wait_for_registrations(container, number_of_registrations=1)
+    wait_for_subscriptions(container, number_of_subscriptions=2)
 
     assert WampServiceA.messages == []
 
