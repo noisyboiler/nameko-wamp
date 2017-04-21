@@ -35,7 +35,7 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
 
     def start(self):
         self._register_topics()
-        self.consumer = TopicSubscriber(
+        self.client = TopicSubscriber(
             topics=self._topics,
             callback=self.message_handler,
             router=self.router,
@@ -44,7 +44,7 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
         self._gt = self.container.spawn_managed_thread(self._consume)
 
     def stop(self):
-        self.consumer.stop()
+        self.client.stop()
 
     def message_handler(self, *args, **kwargs):
         message = kwargs['message']
@@ -60,7 +60,7 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
             self._topics.append(provider.topic)
 
     def _consume(self):
-        self.consumer.start()
+        self.client.start()
 
 
 class WampCalleeProxy(SharedExtension, ProviderCollector):
