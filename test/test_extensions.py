@@ -124,14 +124,14 @@ def test_rpc_service_integration(runner_factory, config_path, router):
     runner = runner_factory(config, WampServiceA, WampServiceB)
     runner.start()
 
-    container = get_container(runner, WampServiceA)
-    wait_for_registrations(container, number_of_registrations=1)
-    wait_for_subscriptions(container, number_of_subscriptions=2)
+    containerA = get_container(runner, WampServiceA)
+    wait_for_registrations(containerA, number_of_registrations=1)
+    wait_for_subscriptions(containerA, number_of_subscriptions=2)
 
-    container = get_container(runner, WampServiceB)
-    wait_for_registrations(container, number_of_registrations=1)
+    containerB = get_container(runner, WampServiceB)
+    wait_for_registrations(containerB, number_of_registrations=1)
 
-    with entrypoint_hook(container, "service_a_caller") as entrypoint:
+    with entrypoint_hook(containerB, "service_a_caller") as entrypoint:
         assert entrypoint("value") == "spam"
 
     WampServiceA.messages = []
