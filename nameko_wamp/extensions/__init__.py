@@ -61,6 +61,8 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
         except AttributeError:
             pass
 
+        self._gt = None
+
     def message_handler(self, *args, **kwargs):
         message = kwargs['message']
         topic = kwargs['meta']['topic']
@@ -86,10 +88,12 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
 
     def setup(self):
         self.name = "{}: CalleeProxy".format(self.container.service_cls.name)
+        logger.info("setting up WampCalleeProxy for: %s", self.name)
 
         self._gt = None
         self._procedure_callback_map = {}
 
+    def start(self):
         self._register_procedures()
         if not self.procedure_names:
             logger.warning(
@@ -108,7 +112,6 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
             name=self.name,
         )
 
-    def start(self):
         self._gt = self.container.spawn_managed_thread(self._consume)
 
     def stop(self):
@@ -116,6 +119,8 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
             self.client.stop()
         except AttributeError:
             pass
+
+        self._gt = None
 
     def message_handler(self, **message):
         meta = message.pop("meta")

@@ -1,9 +1,12 @@
+import logging
 from functools import partial
 
 from nameko.extensions import Entrypoint
 from wampy.messages import Yield
 
 from . import WampTopicProxy, WampCalleeProxy
+
+logger = logging.getLogger(__name__)
 
 
 class WampTopicEntrypoint(Entrypoint):
@@ -26,6 +29,7 @@ class WampCalleeEntrypoint(Entrypoint):
     callee_proxy = WampCalleeProxy()
 
     def setup(self):
+        logger.info("registering provider: %s", self)
         self.callee_proxy.register_provider(self)
 
     def stop(self):
