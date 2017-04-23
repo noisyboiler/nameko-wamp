@@ -14,7 +14,7 @@ class Caller(DependencyProvider):
         return call_proxy
 
 
-class Pubisher(DependencyProvider):
+class Publisher(DependencyProvider):
 
     proxy = WampClientProxy()
 

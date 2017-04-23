@@ -3,7 +3,7 @@ from nameko.testing.utils import assert_stops_raising, get_container
 from nameko.testing.services import entrypoint_hook
 from wampy.peers.clients import Client
 
-from nameko_wamp.extensions.dependencies import Caller, Pubisher
+from nameko_wamp.extensions.dependencies import Caller, Publisher
 from nameko_wamp.extensions.entrypoints import consume, callee
 from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.testing import (
@@ -43,7 +43,7 @@ class WampServiceB(object):
 class WampServiceC(object):
     name = "wamp service C"
 
-    publisher = Pubisher()
+    publisher = Publisher()
 
     @callee
     def publish_foo(self):
