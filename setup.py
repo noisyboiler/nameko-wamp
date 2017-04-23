@@ -12,7 +12,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='nameko-wamp',
-    version='0.1.1',
+    version='0.2.0',
     description='WAMP extension for nameko',
     long_description=long_description,
     url='https://github.com/noisyboiler/nameko_wamp',
