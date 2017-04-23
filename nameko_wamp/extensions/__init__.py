@@ -19,11 +19,11 @@ class WampClientProxy(Extension):
         self.config_path = self.container.config[
             WAMP_CONFIG_KEY]['config_path']
         self.router = Router(config_path=self.config_path)
-
-    def start(self):
         self.client = Client(
             router=self.router, name="nameko-wamp client proxy"
         )
+
+    def start(self):
         self.client.start()
 
     def stop(self):
@@ -94,6 +94,8 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
         self._procedure_callback_map = {}
 
     def start(self):
+        # we need all entrypoints setup methods to have executed before we can
+        # compile a list of procedure names
         self._register_procedures()
         if not self.procedure_names:
             logger.warning(
