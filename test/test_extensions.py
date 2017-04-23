@@ -52,7 +52,7 @@ class WampServiceC(object):
 
 @pytest.yield_fixture
 def wamp_client(router):
-    with Client(router=router) as client:
+    with Client(router=router, name="Test Case Client") as client:
         yield client
 
 
@@ -70,7 +70,9 @@ def test_service_consumes_topics(container_factory, config_path, router):
     wait_for_registrations(container, number_of_registrations=1)
     wait_for_subscriptions(container, number_of_subscriptions=2)
 
-    with Client(router=router) as wamp_client:
+    with Client(
+            router=router, name="Topic Consumer Test Case Client"
+    ) as wamp_client:
         wamp_client.publish(topic="foo", message="cheese")
         wamp_client.publish(topic="bar", message="eggs")
 
@@ -81,6 +83,7 @@ def test_service_consumes_topics(container_factory, config_path, router):
         ]
 
     assert_stops_raising(waiting_for_the_message)
+    container.stop()
     WampServiceA.messages = []
 
 
@@ -100,9 +103,10 @@ def test_service_rpc_methods_are_called_from_wamp_client(
     wait_for_registrations(container, number_of_registrations=1)
     wait_for_subscriptions(container, number_of_subscriptions=2)
 
-    with Client(router=router) as wamp_client:
+    with Client(router=router, name="Rpc Test Case Client") as wamp_client:
         result = wamp_client.rpc.spam_call(cheese="cheddar", eggs="ducks")
-        assert result == "spam"
+
+    assert result == "spam"
 
     def waiting_for_the_message():
         assert len(WampServiceA.messages) == 1
@@ -111,6 +115,8 @@ def test_service_rpc_methods_are_called_from_wamp_client(
         ]
 
     assert_stops_raising(waiting_for_the_message)
+
+    container.stop()
     WampServiceA.messages = []
 
 
@@ -134,6 +140,7 @@ def test_rpc_service_integration(runner_factory, config_path, router):
     with entrypoint_hook(containerB, "service_a_caller") as entrypoint:
         assert entrypoint("value") == "spam"
 
+    runner.stop()
     WampServiceA.messages = []
 
 
