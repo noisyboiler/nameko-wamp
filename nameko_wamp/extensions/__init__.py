@@ -50,7 +50,7 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
         self._register_topics()
         if not self._topics:
             logger.warning(
-                "At least one topic must be subscribed to by: %s", self.name
+                "At least one topic should be subscribed to by: %s", self.name
             )
 
         self.client = TopicSubscriber(
@@ -106,7 +106,7 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
         self._register_procedures()
         if not self.procedure_names:
             logger.warning(
-                "At least one proceure must be registered by: %s", self.name
+                "At least one proceure should be registered by: %s", self.name
             )
 
         self.config_path = self.container.config[
