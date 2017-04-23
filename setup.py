@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "nameko==2.5.1",
-        "wampy==0.9.2",
+        "wampy==0.9.3",
         "eventlet==0.21.0",
     ],
     extras_require={
@@ -39,6 +39,10 @@ setup(
             "autobahn==0.17.2",
             "pytest==2.9.1",
             "mock==1.3.0",
+            "pytest==2.9.1",
+            "pytest-capturelog==0.7",
+            "colorlog",
+            "flake8",
         ]
     },
     entry_points={},
