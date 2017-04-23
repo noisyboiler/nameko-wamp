@@ -56,7 +56,9 @@ def wamp_client(router):
         yield client
 
 
-def test_service_consumes_topics(container_factory, config_path, router):
+def test_nameko_service_consumes_topics_from_any_wampy_client(
+        container_factory, config_path, router
+):
     container = container_factory(WampServiceA, config={
         WAMP_CONFIG_KEY: {
             'config_path': config_path,
@@ -87,7 +89,7 @@ def test_service_consumes_topics(container_factory, config_path, router):
     WampServiceA.messages = []
 
 
-def test_service_rpc_methods_are_called_from_wamp_client(
+def test_nameko_service_rpc_methods_are_called_by_any_wampy_client(
         container_factory, config_path, router
 ):
     container = container_factory(WampServiceA, config={
@@ -120,7 +122,9 @@ def test_service_rpc_methods_are_called_from_wamp_client(
     WampServiceA.messages = []
 
 
-def test_rpc_service_integration(runner_factory, config_path, router):
+def test_nameko_services_can_call_each_other_over_wamp_rpc(
+        runner_factory, config_path, router
+):
     config = {
         WAMP_CONFIG_KEY: {
             'config_path': config_path,
@@ -144,7 +148,9 @@ def test_rpc_service_integration(runner_factory, config_path, router):
     WampServiceA.messages = []
 
 
-def test_publish_service_integration(runner_factory, config_path, router):
+def test_nameko_services_can_subscribe_to_others_wamp_topics(
+        runner_factory, config_path, router
+):
     config = {
         WAMP_CONFIG_KEY: {
             'config_path': config_path,
