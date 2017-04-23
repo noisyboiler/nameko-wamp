@@ -23,7 +23,7 @@ nameko wamp
 
 Web Application Messaging Protocol (WAMP) for the nameko microservices framework
 
-Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints.
+Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) example service implementing WAMP entrypoints and dependencies.
 
 ::
 
@@ -35,7 +35,11 @@ Nameko Wamp provides Extensions for WAMP PUB-SUB and RPC. Here is a (silly) exam
 
         name = "weather_service"
 
+        # a Dependency used to make remote procedure calls over WAMP.
+        # note that we don't need to know what nameko service implements
+        # a particular remote procedure.
         caller = Caller()
+        # another Dependency to publish messages to Topics.
         publihser = Publisher()
 
         @callee
@@ -56,9 +60,9 @@ There is also the dependency injection ``caller``. Yet another WAMP Role, this a
 Wampy
 ~~~~~
 
-Under the hood nameko wamp uses wampy as the Client Peer - and the Router Peer when running tests. The Router is Crossbar.io.
+Under the hood **nameko-wamp** uses wampy_ as the Client Peer - and the Router Peer when running tests is Crossbar.io.
 
-You can use a stand-alone wampy Client to interact with your nameko services too. See the wampy project for more details, but the standard pattern is:
+You can use a stand-alone **wampy** Client to interact with your nameko services too. See the wampy_ project for more details, but the standard pattern is:
 
 ::
 
