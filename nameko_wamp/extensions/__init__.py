@@ -45,7 +45,14 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
         self.router = Router(config_path=self.config_path)
 
     def start(self):
+        # we need all entrypoints setup methods to have executed before we can
+        # compile a list of topics to subscribe to
         self._register_topics()
+        if not self._topics:
+            logger.warning(
+                "At least one topic must be subscribed to by: %s", self.name
+            )
+
         self.client = TopicSubscriber(
             topics=self._topics,
             callback=self.message_handler,
