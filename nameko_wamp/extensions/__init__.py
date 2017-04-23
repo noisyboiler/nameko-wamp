@@ -1,3 +1,5 @@
+import logging
+
 from nameko.extensions import ProviderCollector, SharedExtension, Extension
 from wampy.errors import WampyError
 from wampy.peers.clients import Client
@@ -8,6 +10,8 @@ from wampy.roles.subscriber import TopicSubscriber
 from nameko_wamp.constants import WAMP_CONFIG_KEY
 from nameko_wamp.messages import NamekoMessageHandler
 
+logger = logging.getLogger(__name__)
+
 
 class WampClientProxy(Extension):
 
@@ -17,16 +21,23 @@ class WampClientProxy(Extension):
         self.router = Router(config_path=self.config_path)
 
     def start(self):
-        self.client = Client(router=self.router)
+        self.client = Client(
+            router=self.router, name="nameko-wamp client proxy"
+        )
         self.client.start()
 
     def stop(self):
-        self.client.stop()
+        try:
+            self.client.stop()
+        except AttributeError:
+            pass
 
 
 class WampTopicProxy(SharedExtension, ProviderCollector):
 
     def setup(self):
+        self.name = "{}: TopicProxy".format(self.container.service_cls.name)
+
         self._gt = None
         self._topics = []
         self.config_path = self.container.config[
@@ -39,12 +50,16 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
             topics=self._topics,
             callback=self.message_handler,
             router=self.router,
+            name=self.name,
         )
 
         self._gt = self.container.spawn_managed_thread(self._consume)
 
     def stop(self):
-        self.client.stop()
+        try:
+            self.client.stop()
+        except AttributeError:
+            pass
 
     def message_handler(self, *args, **kwargs):
         message = kwargs['message']
@@ -70,25 +85,37 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
         return self._procedure_callback_map.keys()
 
     def setup(self):
+        self.name = "{}: CalleeProxy".format(self.container.service_cls.name)
+
         self._gt = None
         self._procedure_callback_map = {}
 
         self._register_procedures()
+        if not self.procedure_names:
+            logger.warning(
+                "At least one proceure must be registered by: %s", self.name
+            )
+
         self.config_path = self.container.config[
             WAMP_CONFIG_KEY]['config_path']
+
         self.router = Router(config_path=self.config_path)
         self.client = CalleeProxy(
             router=self.router,
             procedure_names=self.procedure_names,
             callback=self.message_handler,
             message_handler=NamekoMessageHandler,
+            name=self.name,
         )
 
     def start(self):
         self._gt = self.container.spawn_managed_thread(self._consume)
 
     def stop(self):
-        self.client.stop()
+        try:
+            self.client.stop()
+        except AttributeError:
+            pass
 
     def message_handler(self, **message):
         meta = message.pop("meta")

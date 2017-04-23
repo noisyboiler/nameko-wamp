@@ -1,7 +1,10 @@
 import eventlet
+import logging
 from wampy.errors import WampyError
 
 from nameko_wamp.extensions import WampCalleeProxy, WampTopicProxy
+
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 5
 
@@ -22,12 +25,27 @@ def wait_for_registrations(container, number_of_registrations):
 
     session = ext.client.session
 
-    with eventlet.Timeout(TIMEOUT):
+    success = False
+    with eventlet.Timeout(TIMEOUT, False):
         while (
             len(session.registration_map.keys())
             < number_of_registrations
         ):
             eventlet.sleep()
+        success = True
+
+    if not success:
+        logger.error(
+            "%s has not registered %s callees",
+            ext.client.name, number_of_registrations
+        )
+        raise WampyError(
+            "Registrations Not Found: {}".format(
+                session.registration_map.keys()
+            )
+        )
+
+    logger.info("found registrations: %s", session.registration_map.keys())
 
 
 def wait_for_subscriptions(container, number_of_subscriptions):
@@ -46,9 +64,20 @@ def wait_for_subscriptions(container, number_of_subscriptions):
 
     session = ext.client.session
 
-    with eventlet.Timeout(TIMEOUT):
+    success = False
+    with eventlet.Timeout(TIMEOUT, False):
         while (
             len(session.subscription_map.keys())
             < number_of_subscriptions
         ):
             eventlet.sleep()
+        success = True
+
+    if not success:
+        logger.error(
+            "%s has not subscribed to %s topics",
+            ext.client.name, number_of_subscriptions
+        )
+        raise WampyError("Subscriptions Not Found")
+
+    logger.info("found subscriptions: %s", session.subscription_map.keys())
