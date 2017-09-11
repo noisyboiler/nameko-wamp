@@ -4,7 +4,7 @@ from functools import partial
 from nameko.extensions import Entrypoint
 from wampy.messages import Yield
 
-from . import WampTopicProxy, WampCalleeProxy
+from .dependencies import WampTopicProxy, WampCalleeProxy
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +35,7 @@ class WampCalleeEntrypoint(Entrypoint):
     def stop(self):
         self.callee_proxy.unregister_provider(self)
 
-    def handle_message(self, *args, **kwargs):
-        request_id = kwargs.pop("request_id")
+    def handle_message(self, request_id, *args, **kwargs):
         handle_result = partial(self.handle_result, request_id)
         self.container.spawn_worker(
             self, args, kwargs, handle_result=handle_result

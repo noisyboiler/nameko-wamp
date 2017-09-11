@@ -2,7 +2,8 @@ import eventlet
 import logging
 from wampy.errors import WampyError
 
-from nameko_wamp.extensions import WampCalleeProxy, WampTopicProxy
+from nameko_wamp.extensions.dependencies import (
+    WampCalleeProxy, WampTopicProxy)
 
 logger = logging.getLogger(__name__)
 
