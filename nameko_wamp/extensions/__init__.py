@@ -1,14 +1,12 @@
 import logging
 
 from nameko.extensions import ProviderCollector, SharedExtension, Extension
-from wampy.errors import WampyError
+from wampy.message_handler import MessageHandler
 from wampy.peers.clients import Client
 from wampy.peers.routers import Crossbar as Router
-from wampy.roles.callee import CalleeProxy
-from wampy.roles.subscriber import TopicSubscriber
 
 from nameko_wamp.constants import WAMP_CONFIG_KEY
-from nameko_wamp.messages import NamekoMessageHandler
+from nameko_wamp.wamp import NamekoClient, NamekoMessageHandler
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +34,8 @@ class WampClientProxy(Extension):
 class WampTopicProxy(SharedExtension, ProviderCollector):
 
     def setup(self):
-        self.name = "{}: TopicProxy".format(self.container.service_cls.name)
+        self.name = "{} TopicProxy".format(self.container.service_cls.name)
+        logger.info("%s WampTopicProxy setting up", self.name)
 
         self._gt = None
         self._topics = []
@@ -53,10 +52,12 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
                 "At least one topic should be subscribed to by: %s", self.name
             )
 
-        self.client = TopicSubscriber(
+        logger.info("registering topics: %s", self._topics)
+        self.client = NamekoClient(
+            providers=self._providers,
             topics=self._topics,
-            callback=self.message_handler,
             router=self.router,
+            message_handler=MessageHandler(),
             name=self.name,
         )
 
@@ -69,15 +70,6 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
             pass
 
         self._gt = None
-
-    def message_handler(self, *args, **kwargs):
-        message = kwargs['message']
-        topic = kwargs['meta']['topic']
-
-        for provider in self._providers:
-            # alternatively could mark providers with subscription IDs?
-            if provider.topic == topic:
-                provider.handle_message(message)
 
     def _register_topics(self):
         for provider in self._providers:
@@ -89,35 +81,31 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
 
 class WampCalleeProxy(SharedExtension, ProviderCollector):
 
-    @property
-    def procedure_names(self):
-        return self._procedure_callback_map.keys()
-
     def setup(self):
         self.name = "{}: CalleeProxy".format(self.container.service_cls.name)
         logger.info("setting up WampCalleeProxy for: %s", self.name)
 
         self._gt = None
-        self._procedure_callback_map = {}
+        self._procedures = []
+
+        self.config_path = self.container.config[
+            WAMP_CONFIG_KEY]['config_path']
+        self.router = Router(config_path=self.config_path)
 
     def start(self):
         # we need all entrypoints setup methods to have executed before we can
         # compile a list of procedure names
         self._register_procedures()
-        if not self.procedure_names:
+        if not self._procedures:
             logger.warning(
                 "At least one proceure should be registered by: %s", self.name
             )
 
-        self.config_path = self.container.config[
-            WAMP_CONFIG_KEY]['config_path']
-
-        self.router = Router(config_path=self.config_path)
-        self.client = CalleeProxy(
+        self.client = NamekoClient(
+            providers=self._providers,
             router=self.router,
-            procedure_names=self.procedure_names,
-            callback=self.message_handler,
-            message_handler=NamekoMessageHandler,
+            procedures=self._procedures,
+            message_handler=NamekoMessageHandler(),
             name=self.name,
         )
 
@@ -131,22 +119,9 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
 
         self._gt = None
 
-    def message_handler(self, **message):
-        meta = message.pop("meta")
-        procedure_name = meta['procedure_name']
-        request_id = meta['request_id']
-
-        for provider in self._providers:
-            if provider.method_name == procedure_name:
-                provider.handle_message(message, request_id=request_id)
-                break
-        else:
-            raise WampyError('no providers matching procedure_name')
-
     def _register_procedures(self):
         for provider in self._providers:
-            self._procedure_callback_map[
-                provider.method_name] = provider.handle_message
+            self._procedures.append(provider.method_name)
 
     def _consume(self):
         self.client.start()

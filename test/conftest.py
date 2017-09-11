@@ -1,10 +1,6 @@
 import pytest
 
 
-def pytest_configure(config):
-    pass
-
-
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def config_path():
-    return './test/crossbar.config.json'
+    return './nameko_wamp/testing/crossbar.config.json'
