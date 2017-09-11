@@ -4,7 +4,7 @@ from functools import partial
 from nameko.extensions import Entrypoint
 from wampy.messages import Yield
 
-from . import WampTopicProxy, WampCalleeProxy
+from .dependencies import WampTopicProxy, WampCalleeProxy
 
 logger = logging.getLogger(__name__)
 
