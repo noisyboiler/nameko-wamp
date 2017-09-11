@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "nameko==2.5.4",
-        "wampy==0.9.7",
+        "wampy==0.9.8",
         "eventlet==0.21.0",
     ],
     extras_require={
