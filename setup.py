@@ -32,7 +32,7 @@ setup(
         "eventlet==0.21.0",
         "nameko==2.5.4",
         "six==1.10.0",
-        "wampy==0.9.17",
+        "wampy==0.9.19",
     ],
     extras_require={
         'dev': [
