@@ -36,12 +36,14 @@ class WampCalleeEntrypoint(Entrypoint):
         self.callee_proxy.unregister_provider(self)
 
     def handle_message(self, request_id, *args, **kwargs):
+        logger.info("new message for  wampy: %s", request_id)
         handle_result = partial(self.handle_result, request_id)
         self.container.spawn_worker(
             self, args, kwargs, handle_result=handle_result
         )
 
     def handle_result(self, request_id, *args, **kwargs):
+        logger.info("handling result from wampy: %s", request_id)
         worker_ctx, result, exc_info = args
         session = self.callee_proxy.client.session
 
