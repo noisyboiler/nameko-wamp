@@ -6,9 +6,6 @@
 .. |Python27| image:: https://img.shields.io/badge/python-2.7-blue.svg
 .. _Python27: https://pypi.python.org/pypi/nameko-wamp/
 
-.. |Python33| image:: https://img.shields.io/badge/python-3.3-blue.svg
-.. _Python33: https://pypi.python.org/pypi/nameko-wamp/
-
 .. |Python34| image:: https://img.shields.io/badge/python-3.4-blue.svg
 .. _Python34: https://pypi.python.org/pypi/nameko-wamp/
 
@@ -60,7 +57,13 @@ There is also the dependency injection ``caller``. Yet another WAMP Role, this a
 Wampy
 ~~~~~
 
-Under the hood **nameko-wamp** uses wampy_ as the Client Peer - and the Router Peer when running tests is Crossbar.io.
+*Important*
+
+Under the hood **nameko-wamp** uses wampy_ as the Client Peer - and the Router Peer when running tests is Crossbar.io. Wampy uses **Gevent** by default and you must instruct wampy to use *eventlet* instead.
+
+::
+
+    $ export WAMPY_ASYNC_NAME=eventlet
 
 You can use a stand-alone **wampy** Client to interact with your nameko services too. See the wampy_ project for more details, but the standard pattern is:
 

@@ -34,16 +34,15 @@ class NamekoMessageHandler(MessageHandler):
             raise
 
 
-class NamekoClient(Client):
+class NamekoWampyClient(Client):
     def __init__(
-            self, providers, topics=None, procedures=None,
-            **kwargs
+        self, providers, topics=None, procedures=None, **kwargs
     ):
         self.providers = providers
         self.topics = topics or []
         self.procedures = procedures or []
 
-        super(NamekoClient, self).__init__(**kwargs)
+        super(NamekoWampyClient, self).__init__(**kwargs)
 
     def __getattr__(self, name):
         # implemented to intercept calls to callee entrypoints which are not
@@ -76,7 +75,7 @@ class NamekoClient(Client):
 
     def register_roles(self):
         # over-ridden so that a single handler for all nameko service
-        # consumers or callees can act as a proxy to the actial service
+        # consumers or callees can act as a proxy to the actual service
         # callable
         logger.info("registering roles for: %s", self.name)
         for topic in self.topics:
@@ -90,3 +89,5 @@ class NamekoClient(Client):
             logger.info(
                 '%s registered callee "%s"', self.name, procedure_name,
             )
+
+        logger.info('registered all roles')

@@ -9,7 +9,7 @@ from wampy.peers.routers import Crossbar as Router
 from wampy.roles.publisher import PublishProxy
 
 from nameko_wamp.constants import WAMP_CONFIG_KEY
-from nameko_wamp.wamp import NamekoClient, NamekoMessageHandler
+from nameko_wamp.wamp import NamekoWampyClient, NamekoMessageHandler
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class WampTopicProxy(SharedExtension, ProviderCollector):
             )
 
         logger.info("registering topics: %s", self._topics)
-        self.client = NamekoClient(
+        self.client = NamekoWampyClient(
             providers=self._providers,
             topics=self._topics,
             router=self.router,
@@ -104,7 +104,7 @@ class WampCalleeProxy(SharedExtension, ProviderCollector):
                 "At least one proceure should be registered by: %s", self.name
             )
 
-        self.client = NamekoClient(
+        self.client = NamekoWampyClient(
             providers=self._providers,
             router=self.router,
             procedures=self._procedures,

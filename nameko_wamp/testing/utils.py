@@ -10,6 +10,12 @@ logger = logging.getLogger(__name__)
 TIMEOUT = 5
 
 
+def wait_for_session(client):
+    with eventlet.Timeout(TIMEOUT):
+        while client.session.id is None:
+            eventlet.sleep(0.01)
+
+
 def wait_for_registrations(container, number_of_registrations):
     if not container.started:
         raise WampyError(
