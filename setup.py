@@ -38,6 +38,7 @@ setup(
     ],
     extras_require={
         'dev': [
+            "attrs==17.4.0",  # fixes Linux/Pytest bug
             "crossbar==0.15.0",
             "autobahn==0.17.2",
             "Twisted==17.9.0",
