@@ -1,4 +1,4 @@
-|Travis|_ |Python27|_ |Python33|_ |Python34|_ |Python35|_ |Python36|_
+|Travis|_ |Python27|_ |Python34|_ |Python35|_ |Python36|_
 
 .. |Travis| image:: https://travis-ci.org/noisyboiler/nameko-wamp.svg?branch=master
 .. _Travis: https://travis-ci.org/noisyboiler/nameko-wamp
