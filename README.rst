@@ -57,9 +57,9 @@ There is also the dependency injection ``caller``. Yet another WAMP Role, this a
 Wampy
 ~~~~~
 
-*Important*
+**Important**
 
-Under the hood **nameko-wamp** uses wampy_ as the Client Peer - and the Router Peer when running tests is Crossbar.io. Wampy uses **Gevent** by default and you must instruct wampy to use *eventlet* instead.
+Under the hood **nameko-wamp** uses wampy_ as the Client Peer. Wampy uses **Gevent** by default for async networking whilst nameko uses **Eventlet**, so you must instruct wampy to use *eventlet* too.
 
 ::
 
@@ -69,7 +69,7 @@ You can use a stand-alone **wampy** Client to interact with your nameko services
 
 ::
 
-    with Client(router=router) as client:
+    with Client(url="ws://example.com:8080") as client:
         result = client.rpc.get_weather()
         assert result == "sunny"
 
