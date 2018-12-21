@@ -2,6 +2,9 @@ language: python
 
 sudo: false
 
+env:
+  - WAMPY_ASYNC_NAME=eventlet
+
 # https://github.com/travis-ci/travis-ci/issues/3968
 install:
   - pip install -U pip
