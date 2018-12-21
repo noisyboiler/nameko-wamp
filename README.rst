@@ -6,9 +6,6 @@
 .. |Python27| image:: https://img.shields.io/badge/python-2.7-blue.svg
 .. _Python27: https://pypi.python.org/pypi/nameko-wamp/
 
-.. |Python33| image:: https://img.shields.io/badge/python-3.3-blue.svg
-.. _Python33: https://pypi.python.org/pypi/nameko-wamp/
-
 .. |Python34| image:: https://img.shields.io/badge/python-3.4-blue.svg
 .. _Python34: https://pypi.python.org/pypi/nameko-wamp/
 
