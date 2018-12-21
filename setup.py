@@ -29,7 +29,7 @@ setup(
     keywords='WAMP RPC',
     packages=find_packages(),
     install_requires=[
-        "eventlet==0.21.0",
+        "eventlet==0.20.1",
         "nameko==2.5.4",
         "six==1.10.0",
         "wampy==0.9.19",
